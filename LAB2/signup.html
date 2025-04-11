@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <link rel = "stylesheet" type = "text/css" href = "main.css">
+    <title>signup.html</title>
+</head>
+<body>
+    <h1>Welcome to INTERNET-PROGRAMMING MOVIE SITE</h1>
+    <h4 class = "portal"><a  href = "./login.html">로그인</a> | <a>회원가입</a></h4>
+    <div class ="input_div"><p><label>이름: <input name = "name"  autofocus /></label></p>
+        <p><label>생일: <input name = "bday" type="date" required /></label></p>
+        <p><label>이메일: <input name = "email" type = "email" autocomplete="on"  placeholder="name@domain.com" /></label></p>
+        <p><label>학년: <input name = "grade" type = "number" min = "1" max = "4" step = "1"/></label></p>
+        <p><label>성별: <input name = "gender" type = "radio"/></label><label>  남성                        </label><input name = "gender" type = "radio"/><label>  여성</label></p>
+        <p><label>사이트를 알게된 경로: </label><select name = "how">
+            <option selected>검색 엔진</option>
+            <option>지인 소개</option>
+            <option>에브리타임</option>
+            <option>네이버 카페</option></select>
+        </p>
+    <p><input class = "Signup_button" type="button" value = "Signup" onclick ="location.href = './login.html'"/><input class = "Cancel_button" type="button" value = "Cancel" onclick ="location.href = './login.html'"/></p></div>
+</body>
+</html>
