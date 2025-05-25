@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <title>인프밍 영화 정보</title>
+</head>
+<body>
+  <header id="mainp">
+    <div class="contain">
+      <h1 id="mainh1">인프밍 영화 정보 사이트입니다.</h1>
+      <nav class="nav-container">
+        <h4 class="navi"><a class="selected">메인페이지</a></h4>
+        <h4 class="navi"><a href="login.html">로그인</a></h4>
+        <h4 class="navi"><a href="signup.html">회원가입</a></h4>
+      </nav>
+    </div>
+    <hr>
+  </header>
+
+  <main class="main-container">
+    <section class="search-bar">
+      <input id="search-input" type="text" placeholder="키워드를 입력하세요.">
+      <button onclick="applyFilter()">검색</button>
+    </section>
+
+    <h2>영화 목록</h2>
+
+    <div class="content-wrapper">
+      <aside class="sort-box">
+        <p><strong>정렬 기준</strong></p>
+        <label><input type="radio" name="sort" value="rating-desc" checked> 평점 내림차순</label><br>
+        <label><input type="radio" name="sort" value="rating-asc"> 평점 오름차순</label><br>
+        <label><input type="radio" name="sort" value="release-desc"> 개봉 내림차순</label><br>
+        <label><input type="radio" name="sort" value="release-asc"> 개봉 오름차순</label>
+      </aside>
+
+      <section id="movie-list" class="movie-grid"></section>
+    </div>
+  </main>
+
+  <script>
+    const allMovies = [];
+    let filteredMovies = [];
+    let currentIndex = 0;
+    const batchSize = 6;
+
+    const sortFunctions = {
+      'rating-desc': (a, b) => b.vote_average - a.vote_average,
+      'rating-asc': (a, b) => a.vote_average - b.vote_average,
+      'release-desc': (a, b) => new Date(b.release_date) - new Date(a.release_date),
+      'release-asc': (a, b) => new Date(a.release_date) - new Date(b.release_date)
+    };
+
+    const movieList = document.getElementById('movie-list');
+
+    function renderMovies() {
+      const batch = filteredMovies.slice(currentIndex, currentIndex + batchSize);
+      batch.forEach(movie => {
+        const card = document.createElement('div');
+        card.classList.add('movie-card');
+        card.innerHTML = `
+          <img src="${movie.poster_path}" alt="${movie.title}">
+          <h3>${movie.title}</h3>
+          <p class="release-date">📅 ${movie.release_date}</p>
+          <p class="rating">⭐ ${movie.vote_average}</p>
+          <div class="overview">${movie.overview}</div>
+        `;
+        movieList.appendChild(card);
+      });
+      currentIndex += batchSize;
+    }
+
+    function applyFilter() {
+      const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+      const sortValue = document.querySelector('input[name="sort"]:checked').value;
+
+      filteredMovies = allMovies
+        .filter(({ title = '', overview = '' }) =>
+          title.toLowerCase().includes(keyword) || overview.toLowerCase().includes(keyword))
+        .sort(sortFunctions[sortValue]);
+
+      currentIndex = 0;
+      movieList.innerHTML = '';
+      renderMovies();
+    }
+
+    function setupSorting() {
+      document.querySelectorAll('input[name="sort"]').forEach(radio => {
+        radio.addEventListener('change', applyFilter);
+      });
+    }
+
+    function handleScroll() {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        renderMovies();
+      }
+    }
+
+    fetch('product.json')
+      .then(response => response.json())
+      .then(data => {
+        allMovies.push(...data.filter(movie => movie.title && movie.title !== 'FALSE'));
+        setupSorting();
+        applyFilter();
+      })
+
+    window.addEventListener('scroll', handleScroll);
+  </script>
+</body>
+</html>
